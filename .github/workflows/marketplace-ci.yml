@@ -1,0 +1,51 @@
+name: marketplace-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: marketplace.json is valid JSON
+        run: jq empty .claude-plugin/marketplace.json
+
+      - name: required top-level fields present
+        run: |
+          jq -e '.name and .owner and .plugins' .claude-plugin/marketplace.json
+          jq -e '.name | type == "string" and length > 0' .claude-plugin/marketplace.json
+          jq -e '.owner.name | type == "string" and length > 0' .claude-plugin/marketplace.json
+          jq -e '.plugins | type == "array" and length > 0' .claude-plugin/marketplace.json
+
+      - name: every plugin has name + source + version
+        run: |
+          jq -e '.plugins | all(.name and .source and .version)' .claude-plugin/marketplace.json
+          jq -e '.plugins | all(.name | type == "string" and length > 0)' .claude-plugin/marketplace.json
+          jq -e '.plugins | all(.version | test("^[0-9]+\\.[0-9]+\\.[0-9]+"))' .claude-plugin/marketplace.json
+
+      - name: every plugin source is github with owner/repo
+        run: |
+          jq -e '.plugins | all(.source.source == "github")' .claude-plugin/marketplace.json
+          jq -e '.plugins | all(.source.repo | test("^[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$"))' .claude-plugin/marketplace.json
+
+  validate-source-repos-reachable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: each plugin's source repo is reachable on GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          for repo in $(jq -r '.plugins[].source.repo' .claude-plugin/marketplace.json); do
+            echo "checking $repo …"
+            if ! gh api "repos/$repo" --silent; then
+              echo "::error::source repo '$repo' is not reachable"
+              exit 1
+            fi
+          done
