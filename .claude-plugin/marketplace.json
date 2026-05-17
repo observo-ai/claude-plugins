@@ -1,0 +1,25 @@
+{
+  "name": "observo-ai-plugins",
+  "owner": {
+    "name": "Observo",
+    "url": "https://github.com/observo-ai"
+  },
+  "metadata": {
+    "description": "Claude Code plugin marketplace by Observo (https://observoai.co). Hosts QA / product-spec tooling for the Observo test management platform.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "observo-qa-toolkit",
+      "source": {
+        "source": "github",
+        "repo": "observo-ai/observo-qa-toolkit",
+        "branch": "main"
+      },
+      "description": "QA + product spec toolkit for Observo. 7 Claude Code skills covering the cycle from raw meeting notes to Playwright results pushed back to Observo. Repo-agnostic, MIT.",
+      "version": "0.8.0",
+      "homepage": "https://github.com/observo-ai/observo-qa-toolkit",
+      "tags": ["observo", "qa", "playwright", "test-management", "mcp", "prd"]
+    }
+  ]
+}
