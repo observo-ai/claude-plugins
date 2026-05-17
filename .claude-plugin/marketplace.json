@@ -17,7 +17,7 @@
         "branch": "main"
       },
       "description": "QA + product spec toolkit for Observo. 7 Claude Code skills covering the cycle from raw meeting notes to Playwright results pushed back to Observo. Repo-agnostic, MIT.",
-      "version": "0.8.0",
+      "version": "1.0.0",
       "homepage": "https://github.com/observo-ai/observo-qa-toolkit",
       "tags": ["observo", "qa", "playwright", "test-management", "mcp", "prd"]
     }
